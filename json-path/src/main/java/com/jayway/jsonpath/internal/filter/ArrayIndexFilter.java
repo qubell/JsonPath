@@ -31,7 +31,7 @@ public class ArrayIndexFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj,JsonProvider jsonProvider) {
+    public Object filter(Object obj, Object root, JsonProvider jsonProvider) {
 
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
@@ -43,7 +43,6 @@ public class ArrayIndexFilter extends PathTokenFilter {
             trimmedCondition = trimmedCondition.replace("@.length", "");
             trimmedCondition = trimmedCondition + ":";
         }
-
 
         if (trimmedCondition.startsWith(":")) {
             trimmedCondition = trim(trimmedCondition, 1, 0);
@@ -78,7 +77,7 @@ public class ArrayIndexFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Object root, JsonProvider jsonProvider) {
         if(SINGLE_ARRAY_INDEX_PATTERN.matcher(condition).matches()){
             String trimmedCondition = trim(condition, 1, 1);
             List<Object> src = jsonProvider.toList(obj);

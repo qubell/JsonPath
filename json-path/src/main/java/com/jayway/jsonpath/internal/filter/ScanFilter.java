@@ -29,7 +29,7 @@ public class ScanFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider) {
+    public Object filter(Object obj, Object root, JsonProvider jsonProvider) {
         List<Object> result = jsonProvider.createList();
         scan(obj, result, jsonProvider);
 
@@ -42,7 +42,7 @@ public class ScanFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Object root, JsonProvider jsonProvider) {
         throw new UnsupportedOperationException();
     }
 

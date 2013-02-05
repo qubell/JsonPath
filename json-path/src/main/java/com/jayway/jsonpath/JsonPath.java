@@ -183,12 +183,13 @@ public class JsonPath {
         JsonProvider jsonProvider = JsonProviderFactory.createProvider();
 
         Object result = jsonObject;
+        Object root = jsonObject;
 
         boolean inArrayContext = false;
 
         for (PathToken pathToken : tokenizer) {
             PathTokenFilter filter = pathToken.getFilter();
-            result = filter.filter(result, jsonProvider, contextFilters, inArrayContext);
+            result = filter.filter(result, root, contextFilters, inArrayContext, jsonProvider);
 
             if (!inArrayContext) {
                 inArrayContext = filter.isArrayFilter();

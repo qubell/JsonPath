@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.LinkedList;
@@ -32,9 +33,13 @@ public class FieldFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
+    public Object filter(Object obj, Object root, LinkedList<Filter> filters, boolean inArrayContext, JsonProvider jsonProvider) {
+        String condition = getCondition(root);
+
         if (jsonProvider.isList(obj)) {
-            if (!inArrayContext) {
+            if (isInt(condition)) {
+                return new ArrayIndexFilter("[" + condition + "]").filter(obj, root, filters, inArrayContext, jsonProvider);
+            } else if (!inArrayContext) {
                 return null;
             } else {
                 List<Object> result = jsonProvider.createList();
@@ -63,18 +68,23 @@ public class FieldFilter extends PathTokenFilter {
         }
     }
 
+    public Object filter(Object obj, Object root, JsonProvider jsonProvider) {
+        String condition = getCondition(root);
 
-    public Object filter(Object obj, JsonProvider jsonProvider) {
         if (jsonProvider.isList(obj)) {
-            return obj;
+            if (isInt(condition)) {
+                return new ArrayIndexFilter("[" + condition + "]").filter(obj, root, jsonProvider);
+            } else {
+                return obj;
+            }
         } else {
             return jsonProvider.getMapValue(obj, condition);
         }
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
-        return filter(obj, jsonProvider);
+    public Object getRef(Object obj, Object root, JsonProvider jsonProvider) {
+        return filter(obj, root, jsonProvider);
     }
 
     @Override
@@ -82,5 +92,20 @@ public class FieldFilter extends PathTokenFilter {
         return false;
     }
 
+    public String getCondition(Object root) {
+        if (condition.startsWith("[$")) {
+            return JsonPath.read(root, trim(condition, 1, 1)).toString();
+        } else {
+            return condition;
+        }
+    }
 
+    private boolean isInt(String str) {
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
 }

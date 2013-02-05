@@ -62,6 +62,8 @@ public class FilterFactory {
                     //[?(@.name='foo')]
                     return new ArrayEvalFilter(pathFragment);
                 }
+            } else if (pathFragment.startsWith("[$")) {
+                return new FieldFilter(pathFragment);
             } else {
                 //[0]
                 //[0,1, ...]

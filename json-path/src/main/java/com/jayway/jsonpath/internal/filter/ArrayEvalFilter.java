@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.filter.eval.ExpressionEvaluator;
 import com.jayway.jsonpath.spi.JsonProvider;
 
@@ -35,7 +36,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider) {
+    public Object filter(Object obj, Object root, JsonProvider jsonProvider) {
         //[?(@.isbn == 10)]
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
@@ -49,7 +50,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
 
         trimmedCondition = trim(trimmedCondition, 5, 2);
 
-        ConditionStatement conditionStatement = createConditionStatement(trimmedCondition);
+        ConditionStatement conditionStatement = createConditionStatement(trimmedCondition, root);
 
         for (Object item : src) {
             if (isMatch(item, conditionStatement, jsonProvider)) {
@@ -60,7 +61,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Object root, JsonProvider jsonProvider) {
         throw new UnsupportedOperationException("");
     }
 
@@ -88,14 +89,14 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
 
-    private ConditionStatement createConditionStatement(String str) {
+    private ConditionStatement createConditionStatement(String str, Object root) {
         Matcher matcher = PATTERN.matcher(str);
         if (matcher.matches()) {
             String property = matcher.group(1);
             String operator = matcher.group(2);
             String expected = matcher.group(3);
 
-            return new ConditionStatement(property, operator, expected);
+            return new ConditionStatement(property, operator, expected, root);
         } else {
             throw new InvalidPathException("Invalid match " + str);
         }
@@ -106,13 +107,15 @@ public class ArrayEvalFilter extends PathTokenFilter {
         private final String operator;
         private String expected;
 
-        private ConditionStatement(String field, String operator, String expected) {
+        private ConditionStatement(String field, String operator, String expected, Object root) {
             this.field = field;
             this.operator = operator.trim();
             this.expected = expected;
 
             if(this.expected.startsWith("'")){
                 this.expected = trim(this.expected, 1, 1);
+            } else if (this.expected.startsWith("$")) {
+                this.expected = JsonPath.read(root, this.expected).toString();
             }
         }
 

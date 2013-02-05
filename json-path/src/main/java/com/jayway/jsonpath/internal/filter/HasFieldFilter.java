@@ -29,7 +29,7 @@ public class HasFieldFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider) {
+    public Object filter(Object obj, Object root, JsonProvider jsonProvider) {
 
         //[?(@.isbn)]
         List<Object> src = jsonProvider.toList(obj);
@@ -56,7 +56,7 @@ public class HasFieldFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Object root, JsonProvider jsonProvider) {
         throw new UnsupportedOperationException();
     }
 

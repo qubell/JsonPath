@@ -29,12 +29,12 @@ public class PassthroughFilter extends PathTokenFilter {
         this.isArrayFilter = isArrayFilter;
     }
 
-    public Object filter(Object obj, JsonProvider jsonProvider) {
+    public Object filter(Object obj, Object root, JsonProvider jsonProvider) {
         return obj;
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Object root, JsonProvider jsonProvider) {
         return obj;
     }
 

@@ -573,6 +573,7 @@ public class JsonModel {
         JsonProvider jsonProvider = JsonProviderFactory.createProvider();
 
         Object modelRef = jsonObject;
+        Object root = jsonObject;
 
         if (jsonPath.getTokenizer().size() == 1) {
             PathToken onlyToken = jsonPath.getTokenizer().iterator().next();
@@ -586,7 +587,7 @@ public class JsonModel {
             PathToken currentToken;
             do {
                 currentToken = tokens.poll();
-                modelRef = currentToken.apply(modelRef, jsonProvider);
+                modelRef = currentToken.apply(modelRef, root, jsonProvider);
             } while (!tokens.isEmpty());
 
             if (modelRef.getClass().isAssignableFrom(clazz)) {

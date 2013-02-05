@@ -30,7 +30,7 @@ public class ArrayQueryFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
+    public Object filter(Object obj, Object root, LinkedList<Filter> filters, boolean inArrayContext, JsonProvider jsonProvider) {
 
         Filter filter = filters.poll();
 
@@ -39,12 +39,12 @@ public class ArrayQueryFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider) {
+    public Object filter(Object obj, Object root, JsonProvider jsonProvider) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Object root, JsonProvider jsonProvider) {
         throw new UnsupportedOperationException("");
     }
 
